@@ -53,12 +53,15 @@ public class TankPlayer implements Algorithm {
 
     private TankMove checkField(Tank currentTank, List<Position> blockList, List<Tank> tanks, List<Shell> shells, MapState mapState) {
         Position nextPosition = getNextPost(currentTank);
-        if (nextPosition.getX() >= mapState.getSize().getHeight() || nextPosition.getX() < 0 || nextPosition.getY() >= mapState.getSize().getHeight() || nextPosition.getY() < 0) {
+        if (nextPosition.getX() >= mapState.getSize().getHeight() || nextPosition.getX() < 1 || nextPosition.getY() >= mapState.getSize().getHeight() || nextPosition.getY() < 1) {
             shootMove(tanks, currentTank, blockList, mapState);
         }
         HashSet<Shell> blockedShells = new HashSet<>();
         for (Shell shell : shells) {
             if (shell.getPosition().getX() == nextPosition.getX()) {
+                if (shell.getShooterId()==currentTank.getId()){
+                    blockedShells.add(shell);
+                }
                 for (Position position : blockList) {
                     if (position.getX() == nextPosition.getX() && Math.abs(shell.getPosition().getY() - nextPosition.getY()) > Math.abs(shell.getPosition().getY() - position.getPosition().getY())) {
                         blockedShells.add(shell);
