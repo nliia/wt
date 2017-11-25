@@ -17,8 +17,6 @@ import java.util.stream.Collectors;
 
 public class TankPlayer implements Algorithm {
     private int teamId;
-    private static int bestX;
-    private static int bestY;
     private static Base homeBase;
     private static Base enemyBase;
     private static boolean flag;
@@ -56,6 +54,9 @@ public class TankPlayer implements Algorithm {
     private TankMove checkField(Tank currentTank, List<Position> blockList, List<Tank> tanks, List<Shell> shells, MapState mapState) {
         Position currPosition = currentTank.getPosition();
         Position nextPosition = getNextPost(currentTank);
+        if(nextPosition.getX()>=mapState.getSize().getHeight()||nextPosition.getX()<0||nextPosition.getY()>=mapState.getSize().getHeight()||nextPosition.getY()<0){
+            shootMove(tanks,currentTank,blockList,mapState);
+        }
         HashSet<Shell> blockedShells = new HashSet<>();
         for (Shell shell : shells) {
             if (shell.getPosition().getX() == nextPosition.getX()) {
