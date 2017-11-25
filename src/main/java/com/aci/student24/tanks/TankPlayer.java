@@ -187,40 +187,12 @@ public class TankPlayer implements Algorithm {
 
     private TankMove shootMove(List<Tank> tanks, Tank tank, List<Position> blocks, MapState mapState) {
         byte dir = tank.getDir();
-        boolean shoot = true;
-        List<Tank> friends = findFriendTanks(mapState, tank.getPosition());
-        switch (dir) {
-            case Direction.UP:
-                for (Tank tank1 : friends) {
-                    if ((tank1.getY() < tank.getY()) || homeBase.getPosition().getY() < tank.getY())
-                        shoot = false;
-                }
-                break;
-            case Direction.RIGHT:
-                for (Tank tank1 : friends) {
-                    if (tank1.getX() > tank.getX() || homeBase.getPosition().getX() > tank.getX())
-                        shoot = false;
 
-                }
-                break;
-            case Direction.DOWN:
-                for (Tank tank1 : friends) {
-                    if (tank1.getY() > tank.getY() || homeBase.getPosition().getY() > tank.getY())
-                        shoot = false;
-                }
-                break;
-            case Direction.LEFT:
-                for (Tank tank1 : friends) {
-                    if (tank1.getX() < tank.getX() || homeBase.getPosition().getX() < tank.getX())
-                        shoot = false;
-                }
-
-        }
         TankMove tankMove = new TankMove();
         tankMove.setDir(tank.getDir());
         tankMove.setId(tank.getId());
-        tankMove.setShoot(shoot);
         tankMove.setDir(getNextDir(tank));
+        tankMove.setShoot(checkFriends(tankMove.getDir(), mapState, tank));
         return tankMove;
     }
 
@@ -233,20 +205,20 @@ public class TankPlayer implements Algorithm {
         if (Math.abs(diffX) >= Math.abs(diffY)) {
             if (diffX > 0) {
                 if (tank.getDir() != Direction.RIGHT) {
-                    return  Direction.RIGHT;
+                    return Direction.RIGHT;
                 }
             }
 
             if (diffX < 0) {
                 if (tank.getDir() != Direction.LEFT) {
-                    return  Direction.LEFT;
+                    return Direction.LEFT;
                 }
             }
             if (diffY < 0) {
                 if (tank.getDir() != Direction.UP) {
-                    return  Direction.UP;
+                    return Direction.UP;
                 } else {
-                    return  Direction.DOWN;
+                    return Direction.DOWN;
                 }
             } else {
                 if (tank.getDir() != Direction.DOWN) {
@@ -264,7 +236,7 @@ public class TankPlayer implements Algorithm {
 
             if (diffY < 0) {
                 if (tank.getDir() != Direction.UP) {
-                    return  Direction.UP;
+                    return Direction.UP;
                 }
             }
             if (diffX < 0) {
@@ -308,4 +280,36 @@ public class TankPlayer implements Algorithm {
         return results;
     }
 
+    private boolean checkFriends(byte dir, MapState mapState, Tank tank) {
+        List<Tank> friends = findFriendTanks(mapState, tank.getPosition());
+        boolean shoot = true;
+        switch (dir) {
+            case Direction.UP:
+                for (Tank friend : friends) {
+                    if ((friend.getY() < tank.getY()) || homeBase.getPosition().getY() < tank.getY())
+                        shoot = false;
+                }
+                break;
+            case Direction.RIGHT:
+                for (Tank friend : friends) {
+                    if (friend.getX() > tank.getX() || homeBase.getPosition().getX() > tank.getX())
+                        shoot = false;
+
+                }
+                break;
+            case Direction.DOWN:
+                for (Tank friend : friends) {
+                    if (friend.getY() > tank.getY() || homeBase.getPosition().getY() > tank.getY())
+                        shoot = false;
+                }
+                break;
+            case Direction.LEFT:
+                for (Tank tank1 : friends) {
+                    if (tank1.getX() < tank.getX() || homeBase.getPosition().getX() < tank.getX())
+                        shoot = false;
+                }
+
+        }
+        return shoot;
+    }
 }
