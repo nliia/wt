@@ -63,6 +63,9 @@ public class TankPlayer implements Algorithm {
                     if (position.getX() == nextPosition.getX() && Math.abs(shell.getPosition().getY() - nextPosition.getY()) > Math.abs(shell.getPosition().getY() - position.getPosition().getY())) {
                         blockedShells.add(shell);
                     }
+                    if (position.getY() == nextPosition.getY() && Math.abs(shell.getPosition().getX() - nextPosition.getX()) > Math.abs(shell.getPosition().getX() - position.getPosition().getX())) {
+                        blockedShells.add(shell);
+                    }
                 }
             }
         }
