@@ -37,7 +37,7 @@ public class TankPlayer implements Algorithm {
 
         return mapState.getTanks(teamId).stream()
                 .map(tank -> {
-                    return checkField(tank, findBlocks(mapState,tank.getPosition()),findEnemyTanks(mapState,tank.getPosition()),findShells(mapState,tank.getPosition()),mapState);
+                    return checkField(tank, findBlocks(mapState, tank.getPosition()), findEnemyTanks(mapState, tank.getPosition()), findShells(mapState, tank.getPosition()), mapState);
                 }).collect(Collectors.toList());
     }
 
@@ -164,15 +164,17 @@ public class TankPlayer implements Algorithm {
     private List<Shell> findShells(MapState mapState, Position position) {
         List<Shell> results = new ArrayList<>();
         List<Shell> shells = mapState.getShells();
-        for (Shell shell : shells) {
-            if ((shell.getPosition().getX() <= position.getX() + RADIUS && shell.getPosition().getX() > position.getX() && shell.getPosition().getY() == position.getY() && shell.getDir() == Direction.LEFT)
-                    || (shell.getPosition().getX() >= position.getX() - RADIUS && shell.getPosition().getX() < position.getX() && shell.getPosition().getY() == position.getY() && shell.getDir() == Direction.RIGHT)
-                    || (shell.getPosition().getY() <= position.getY() + RADIUS && shell.getPosition().getY() > position.getY() && shell.getPosition().getX() == position.getX() && shell.getDir() == Direction.DOWN)
-                    || (shell.getPosition().getY() >= position.getY() - RADIUS && shell.getPosition().getY() < position.getY() && shell.getPosition().getX() == position.getX() && shell.getDir() == Direction.UP)) {
+        if (!(shells.isEmpty() || shells == null)) {
+            for (Shell shell : shells) {
+                if ((shell.getPosition().getX() <= position.getX() + RADIUS && shell.getPosition().getX() > position.getX() && shell.getPosition().getY() == position.getY() && shell.getDir() == Direction.LEFT)
+                        || (shell.getPosition().getX() >= position.getX() - RADIUS && shell.getPosition().getX() < position.getX() && shell.getPosition().getY() == position.getY() && shell.getDir() == Direction.RIGHT)
+                        || (shell.getPosition().getY() <= position.getY() + RADIUS && shell.getPosition().getY() > position.getY() && shell.getPosition().getX() == position.getX() && shell.getDir() == Direction.DOWN)
+                        || (shell.getPosition().getY() >= position.getY() - RADIUS && shell.getPosition().getY() < position.getY() && shell.getPosition().getX() == position.getX() && shell.getDir() == Direction.UP)) {
 
-                results.add(shell);
+                    results.add(shell);
+                }
+
             }
-
         }
         return results;
     }
@@ -182,27 +184,28 @@ public class TankPlayer implements Algorithm {
         boolean shoot = true;
         List<Tank> friends = findFriendTanks(mapState, tank.getPosition());
         switch (dir) {
-            case 1:
+            case Direction.UP:
                 for (Tank tank1 : friends) {
-                    if (tank1.getY() > tank.getY())
+                    if ((tank1.getY() < tank.getY()) || homeBase.getPosition().getY() < tank.getY())
                         shoot = false;
                 }
                 break;
-            case 2:
+            case Direction.RIGHT:
                 for (Tank tank1 : friends) {
-                    if (tank1.getX() > tank.getX())
+                    if (tank1.getX() > tank.getX() || homeBase.getPosition().getX() > tank.getX())
+                        shoot = false;
+
+                }
+                break;
+            case Direction.DOWN:
+                for (Tank tank1 : friends) {
+                    if (tank1.getY() > tank.getY() || homeBase.getPosition().getY() > tank.getY())
                         shoot = false;
                 }
                 break;
-            case 3:
+            case Direction.LEFT:
                 for (Tank tank1 : friends) {
-                    if (tank1.getY() < tank.getY())
-                        shoot = false;
-                }
-                break;
-            case 4:
-                for (Tank tank1 : friends) {
-                    if (tank1.getX() < tank.getX())
+                    if (tank1.getX() < tank.getX() || homeBase.getPosition().getX() < tank.getX())
                         shoot = false;
                 }
 
@@ -215,8 +218,8 @@ public class TankPlayer implements Algorithm {
         Position enPosition = enemyBase.getPosition();
         int diffX = enPosition.getX() - tank.getX();
         int diffY = enPosition.getY() - tank.getY();
-//если мы слева - разница положительна
-//если справа - отрицательна
+        //если мы слева - разница положительна
+        //если справа - отрицательна
         if (Math.abs(diffX) >= Math.abs(diffY)) {
             if (diffX > 0) {
                 if (tankMove.getDir() != Direction.RIGHT) {
@@ -288,6 +291,7 @@ public class TankPlayer implements Algorithm {
             }
 
         }
+
         return results;
     }
 
