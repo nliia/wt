@@ -75,7 +75,9 @@ public class TankPlayer implements Algorithm {
             if (obj instanceof Brick || (obj instanceof Tank && ((Tank) obj).getTeamId() != teamId) || (obj instanceof Base && obj.equals(enemyBase))) {
                 return new TankMove(currentTank.getId(), currentTank.getDir(), true);
             } else if (obj == null) {
-                return new TankMove(currentTank.getId(), currentTank.getDir(), false);
+                if(checkFriends(currentTank.getDir(),mapState,currentTank)){
+                    return new TankMove(currentTank.getId(), currentTank.getDir(), true);
+                }else return new TankMove(currentTank.getId(), currentTank.getDir(), false);
             }
         }
         return shootMove(tanks, currentTank, blockList, mapState);
