@@ -102,18 +102,27 @@ public class TankPlayer implements Algorithm {
 
     private Position getPosition(Position position, MapState mapState) {
         List<? extends Position> positions = mapState.getBricks();
+        if(positions==null){
+            positions=new ArrayList<>();
+        }
         for (Position objPosition : positions) {
             if (position.equals(objPosition)) {
                 return objPosition;
             }
         }
         positions = mapState.getTanks();
+        if(positions==null){
+            positions=new ArrayList<>();
+        }
         for (Position objPosition : positions) {
             if (position.equals(objPosition)) {
                 return objPosition;
             }
         }
         positions = mapState.getIndestructibles();
+        if(positions==null){
+            positions=new ArrayList<>();
+        }
         for (Position objPosition : positions) {
             if (position.equals(objPosition)) {
                 return objPosition;
