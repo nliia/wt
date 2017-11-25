@@ -52,7 +52,6 @@ public class TankPlayer implements Algorithm {
     }
 
     private TankMove checkField(Tank currentTank, List<Position> blockList, List<Tank> tanks, List<Shell> shells, MapState mapState) {
-        Position currPosition = currentTank.getPosition();
         Position nextPosition = getNextPost(currentTank);
         if (nextPosition.getX() >= mapState.getSize().getHeight() || nextPosition.getX() < 0 || nextPosition.getY() >= mapState.getSize().getHeight() || nextPosition.getY() < 0) {
             shootMove(tanks, currentTank, blockList, mapState);
@@ -73,7 +72,7 @@ public class TankPlayer implements Algorithm {
         shells.removeAll(blockedShells);
         if (shells.isEmpty()) {
             Position obj = getPosition(nextPosition, mapState);
-            if (obj instanceof Brick || (obj instanceof Tank && ((Tank) obj).getTeamId() != teamId)||(obj instanceof Base && obj.equals(enemyBase))) {
+            if (obj instanceof Brick || (obj instanceof Tank && ((Tank) obj).getTeamId() != teamId) || (obj instanceof Base && obj.equals(enemyBase))) {
                 return new TankMove(currentTank.getId(), currentTank.getDir(), true);
             } else if (obj == null) {
                 return new TankMove(currentTank.getId(), currentTank.getDir(), false);
@@ -102,7 +101,7 @@ public class TankPlayer implements Algorithm {
 
     private Position getPosition(Position position, MapState mapState) {
         List<? extends Position> positions = mapState.getBricks();
-        if(positions!=null) {
+        if (positions != null) {
             for (Position objPosition : positions) {
                 if (position.equals(objPosition)) {
                     return objPosition;
@@ -110,7 +109,7 @@ public class TankPlayer implements Algorithm {
             }
         }
         positions = mapState.getTanks();
-        if(positions!=null) {
+        if (positions != null) {
             for (Position objPosition : positions) {
                 if (position.equals(objPosition)) {
                     return objPosition;
@@ -118,7 +117,7 @@ public class TankPlayer implements Algorithm {
             }
         }
         positions = mapState.getIndestructibles();
-        if(positions!=null) {
+        if (positions != null) {
             for (Position objPosition : positions) {
                 if (position.equals(objPosition)) {
                     return objPosition;
@@ -221,7 +220,11 @@ public class TankPlayer implements Algorithm {
         tankMove.setDir(tank.getDir());
         tankMove.setId(tank.getId());
         tankMove.setShoot(shoot);
+        tankMove.setDir(getNextDir(tank));
+        return tankMove;
+    }
 
+    private byte getNextDir(Tank tank) {
         Position enPosition = enemyBase.getPosition();
         int diffX = enPosition.getX() - tank.getX();
         int diffY = enPosition.getY() - tank.getY();
@@ -229,70 +232,59 @@ public class TankPlayer implements Algorithm {
         //если справа - отрицательна
         if (Math.abs(diffX) >= Math.abs(diffY)) {
             if (diffX > 0) {
-                if (tankMove.getDir() != Direction.RIGHT) {
-                    tankMove.setDir(Direction.RIGHT);
-                    return tankMove;
+                if (tank.getDir() != Direction.RIGHT) {
+                    return  Direction.RIGHT;
                 }
             }
 
             if (diffX < 0) {
-                if (tankMove.getDir() != Direction.LEFT) {
-                    tankMove.setDir(Direction.LEFT);
-                    return tankMove;
+                if (tank.getDir() != Direction.LEFT) {
+                    return  Direction.LEFT;
                 }
             }
             if (diffY < 0) {
-                if (tankMove.getDir() != Direction.UP) {
-                    tankMove.setDir(Direction.UP);
-                    return tankMove;
+                if (tank.getDir() != Direction.UP) {
+                    return  Direction.UP;
                 } else {
-                    tankMove.setDir(Direction.DOWN);
-                    return tankMove;
+                    return  Direction.DOWN;
                 }
             } else {
-                if (tankMove.getDir() != Direction.DOWN) {
-                    tankMove.setDir(Direction.DOWN);
-                    return tankMove;
+                if (tank.getDir() != Direction.DOWN) {
+                    return Direction.DOWN;
                 } else {
-                    tankMove.setDir(Direction.UP);
-                    return tankMove;
+                    return Direction.UP;
                 }
             }
         } else {
             if (diffY > 0) {
-                if (tankMove.getDir() != Direction.DOWN) {
-                    tankMove.setDir(Direction.DOWN);
-                    return tankMove;
+                if (tank.getDir() != Direction.DOWN) {
+                    return Direction.DOWN;
                 }
             }
 
             if (diffY < 0) {
-                if (tankMove.getDir() != Direction.UP) {
-                    tankMove.setDir(Direction.UP);
-                    return tankMove;
+                if (tank.getDir() != Direction.UP) {
+                    return  Direction.UP;
                 }
             }
             if (diffX < 0) {
-                if (tankMove.getDir() != Direction.LEFT) {
-                    tankMove.setDir(Direction.LEFT);
-                    return tankMove;
+                if (tank.getDir() != Direction.LEFT) {
+                    return Direction.LEFT;
                 } else {
-                    tankMove.setDir(Direction.RIGHT);
-                    return tankMove;
+                    return Direction.RIGHT;
                 }
             } else {
-                if (tankMove.getDir() != Direction.RIGHT) {
-                    tankMove.setDir(Direction.RIGHT);
-                    return tankMove;
+                if (tank.getDir() != Direction.RIGHT) {
+                    return Direction.RIGHT;
                 } else {
-                    tankMove.setDir(Direction.RIGHT);
-                    return tankMove;
+                    return Direction.RIGHT;
                 }
             }
 
         }
 
     }
+
 
     private List<Tank> findFriendTanks(MapState mapState, Position position) {
         List<Tank> results = new ArrayList<>();
