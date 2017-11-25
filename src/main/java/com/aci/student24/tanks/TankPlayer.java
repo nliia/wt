@@ -252,9 +252,16 @@ public class TankPlayer implements Algorithm {
                     tankMove.setDir(Direction.DOWN);
                     return tankMove;
                 }
+            } else {
+                if (tankMove.getDir() != Direction.DOWN) {
+                    tankMove.setDir(Direction.DOWN);
+                    return tankMove;
+                } else {
+                    tankMove.setDir(Direction.UP);
+                    return tankMove;
+                }
             }
         } else {
-
             if (diffY > 0) {
                 if (tankMove.getDir() != Direction.DOWN) {
                     tankMove.setDir(Direction.DOWN);
@@ -276,11 +283,18 @@ public class TankPlayer implements Algorithm {
                     tankMove.setDir(Direction.RIGHT);
                     return tankMove;
                 }
+            } else {
+                if (tankMove.getDir() != Direction.RIGHT) {
+                    tankMove.setDir(Direction.RIGHT);
+                    return tankMove;
+                } else {
+                    tankMove.setDir(Direction.RIGHT);
+                    return tankMove;
+                }
             }
 
         }
 
-        return tankMove;
     }
 
     private List<Tank> findFriendTanks(MapState mapState, Position position) {
