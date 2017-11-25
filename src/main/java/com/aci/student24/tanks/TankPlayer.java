@@ -42,9 +42,9 @@ public class TankPlayer implements Algorithm {
     private void init(MapState mapState) {
         for (Base base : mapState.getBases()) {
             if (base.getTeamId() != teamId) {
-                homeBase = base;
-            } else {
                 enemyBase = base;
+            } else {
+                homeBase = base;
             }
         }
 
@@ -54,8 +54,8 @@ public class TankPlayer implements Algorithm {
     private TankMove checkField(Tank currentTank, List<Position> blockList, List<Tank> tanks, List<Shell> shells, MapState mapState) {
         Position currPosition = currentTank.getPosition();
         Position nextPosition = getNextPost(currentTank);
-        if(nextPosition.getX()>=mapState.getSize().getHeight()||nextPosition.getX()<0||nextPosition.getY()>=mapState.getSize().getHeight()||nextPosition.getY()<0){
-            shootMove(tanks,currentTank,blockList,mapState);
+        if (nextPosition.getX() >= mapState.getSize().getHeight() || nextPosition.getX() < 0 || nextPosition.getY() >= mapState.getSize().getHeight() || nextPosition.getY() < 0) {
+            shootMove(tanks, currentTank, blockList, mapState);
         }
         HashSet<Shell> blockedShells = new HashSet<>();
         for (Shell shell : shells) {
@@ -162,10 +162,10 @@ public class TankPlayer implements Algorithm {
     }
 
 
-    private List<Shell> findShells(MapState mapState, Position position) {
+    public List<Shell> findShells(MapState mapState, Position position) {
         List<Shell> results = new ArrayList<>();
         List<Shell> shells = mapState.getShells();
-        if (!(shells.isEmpty() || shells == null)) {
+        if (shells != null) {
             for (Shell shell : shells) {
                 if ((shell.getPosition().getX() <= position.getX() + RADIUS && shell.getPosition().getX() > position.getX() && shell.getPosition().getY() == position.getY() && shell.getDir() == Direction.LEFT)
                         || (shell.getPosition().getX() >= position.getX() - RADIUS && shell.getPosition().getX() < position.getX() && shell.getPosition().getY() == position.getY() && shell.getDir() == Direction.RIGHT)
