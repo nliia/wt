@@ -73,7 +73,7 @@ public class TankPlayer implements Algorithm {
         shells.removeAll(blockedShells);
         if (shells.isEmpty()) {
             Position obj = getPosition(nextPosition, mapState);
-            if (obj instanceof Brick || (obj instanceof Tank && ((Tank) obj).getTeamId() != teamId)) {
+            if (obj instanceof Brick || (obj instanceof Tank && ((Tank) obj).getTeamId() != teamId)||(obj instanceof Base && obj.equals(enemyBase))) {
                 return new TankMove(currentTank.getId(), currentTank.getDir(), true);
             } else if (obj == null) {
                 return new TankMove(currentTank.getId(), currentTank.getDir(), false);
@@ -102,30 +102,27 @@ public class TankPlayer implements Algorithm {
 
     private Position getPosition(Position position, MapState mapState) {
         List<? extends Position> positions = mapState.getBricks();
-        if(positions==null){
-            positions=new ArrayList<>();
-        }
-        for (Position objPosition : positions) {
-            if (position.equals(objPosition)) {
-                return objPosition;
+        if(positions!=null) {
+            for (Position objPosition : positions) {
+                if (position.equals(objPosition)) {
+                    return objPosition;
+                }
             }
         }
         positions = mapState.getTanks();
-        if(positions==null){
-            positions=new ArrayList<>();
-        }
-        for (Position objPosition : positions) {
-            if (position.equals(objPosition)) {
-                return objPosition;
+        if(positions!=null) {
+            for (Position objPosition : positions) {
+                if (position.equals(objPosition)) {
+                    return objPosition;
+                }
             }
         }
         positions = mapState.getIndestructibles();
-        if(positions==null){
-            positions=new ArrayList<>();
-        }
-        for (Position objPosition : positions) {
-            if (position.equals(objPosition)) {
-                return objPosition;
+        if(positions!=null) {
+            for (Position objPosition : positions) {
+                if (position.equals(objPosition)) {
+                    return objPosition;
+                }
             }
         }
         return null;
