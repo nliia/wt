@@ -78,19 +78,19 @@ public class TankPlayer implements Algorithm {
                 return new TankMove(currentTank.getId(), currentTank.getDir(), false);
             }
         }
-        return shootMove(tanks, currentTank, blockList);
+        return shootMove(tanks, currentTank, blockList, mapState);
     }
 
     private Position getNextPost(Tank currentTank) {
         Position currPosition = currentTank.getPosition();
         if (currentTank.getDir() == 1) {
-            return new Position(currPosition.getX(), currPosition.getY() + 1);
+            return new Position(currPosition.getX(), currPosition.getY() - 1);
         }
         if (currentTank.getDir() == 2) {
             return new Position(currPosition.getX() + 1, currPosition.getY());
         }
         if (currentTank.getDir() == 3) {
-            return new Position(currPosition.getX(), currPosition.getY() - 1);
+            return new Position(currPosition.getX(), currPosition.getY() + 1);
         }
         if (currentTank.getDir() == 4) {
             return new Position(currPosition.getX() - 1, currPosition.getY());
@@ -177,11 +177,118 @@ public class TankPlayer implements Algorithm {
         return results;
     }
 
-    private TankMove shootMove(List<Tank> tanks, Tank tank, List<Position> blocks) {
-        if (!tanks.isEmpty()) {
-            Tank enemyTank = tanks.get(0);
+    private TankMove shootMove(List<Tank> tanks, Tank tank, List<Position> blocks, MapState mapState) {
+        byte dir = tank.getDir();
+        boolean shoot = true;
+        List<Tank> friends = findFriendTanks(mapState, tank.getPosition());
+        switch (dir) {
+            case 1:
+                for (Tank tank1 : friends) {
+                    if (tank1.getY() > tank.getY())
+                        shoot = false;
+                }
+                break;
+            case 2:
+                for (Tank tank1 : friends) {
+                    if (tank1.getX() > tank.getX())
+                        shoot = false;
+                }
+                break;
+            case 3:
+                for (Tank tank1 : friends) {
+                    if (tank1.getY() < tank.getY())
+                        shoot = false;
+                }
+                break;
+            case 4:
+                for (Tank tank1 : friends) {
+                    if (tank1.getX() < tank.getX())
+                        shoot = false;
+                }
+
         }
-        return null;
+        TankMove tankMove = new TankMove();
+        tankMove.setDir(tank.getDir());
+        tankMove.setId(tank.getId());
+        tankMove.setShoot(shoot);
+
+        Position enPosition = enemyBase.getPosition();
+        int diffX = enPosition.getX() - tank.getX();
+        int diffY = enPosition.getY() - tank.getY();
+//если мы слева - разница положительна
+//если справа - отрицательна
+        if (Math.abs(diffX) >= Math.abs(diffY)) {
+            if (diffX > 0) {
+                if (tankMove.getDir() != Direction.RIGHT) {
+                    tankMove.setDir(Direction.RIGHT);
+                    return tankMove;
+                }
+            }
+
+            if (diffX < 0) {
+                if (tankMove.getDir() != Direction.LEFT) {
+                    tankMove.setDir(Direction.LEFT);
+                    return tankMove;
+                }
+            }
+            if (diffY < 0) {
+                if (tankMove.getDir() != Direction.UP) {
+                    tankMove.setDir(Direction.UP);
+                    return tankMove;
+                } else {
+                    tankMove.setDir(Direction.DOWN);
+                    return tankMove;
+                }
+            }
+        } else {
+
+            if (diffY > 0) {
+                if (tankMove.getDir() != Direction.DOWN) {
+                    tankMove.setDir(Direction.DOWN);
+                    return tankMove;
+                }
+            }
+
+            if (diffY < 0) {
+                if (tankMove.getDir() != Direction.UP) {
+                    tankMove.setDir(Direction.UP);
+                    return tankMove;
+                }
+            }
+            if (diffX < 0) {
+                if (tankMove.getDir() != Direction.LEFT) {
+                    tankMove.setDir(Direction.LEFT);
+                    return tankMove;
+                } else {
+                    tankMove.setDir(Direction.RIGHT);
+                    return tankMove;
+                }
+            }
+
+        }
+
+        return tankMove;
+    }
+
+    private List<Tank> findFriendTanks(MapState mapState, Position position) {
+        List<Tank> results = new ArrayList<>();
+        List<Tank> allTanks = mapState.getTanks();
+        List<Tank> tanks = new ArrayList<>();
+
+        for (Tank tank : allTanks) {
+            if (tank.getTeamId() == teamId) {
+                tanks.add(tank);
+            }
+        }
+
+        for (Tank tank : tanks) {
+            if ((((tank.getPosition().getX() <= position.getX() + RADIUS && tank.getPosition().getX() >= position.getX() - RADIUS) && tank.getPosition().getY() == position.getY()))
+                    || ((tank.getPosition().getY() <= position.getY() + RADIUS && tank.getPosition().getY() >= position.getY() - RADIUS) && tank.getPosition().getX() == position.getX())) {
+                results.add(tank);
+            }
+
+        }
+        return results;
     }
 
 }
