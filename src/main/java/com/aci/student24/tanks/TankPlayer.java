@@ -35,7 +35,7 @@ public class TankPlayer implements Algorithm {
 
         return mapState.getTanks(teamId).stream()
                 .map(tank -> {
-                    return checkField(tank, findBlocks(mapState, tank.getPosition()), findEnemyTanks(mapState, tank.getPosition()), findShells(mapState, tank.getPosition()), mapState);
+                    return checkField(tank, findBlocks(mapState, getNextPost(tank)), findEnemyTanks(mapState, getNextPost(tank)), findShells(mapState, getNextPost(tank)), mapState);
                 }).collect(Collectors.toList());
     }
 
