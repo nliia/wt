@@ -34,7 +34,8 @@ public class TankMove implements Serializable {
         this.shoot = shoot;
     }
 
-    public TankMove() {}
+    public TankMove() {
+    }
 
     public TankMove(int id, byte dir, boolean shoot) {
         this.id = id;
