@@ -37,7 +37,7 @@ public class TankPlayer implements Algorithm {
 
         return mapState.getTanks(teamId).stream()
                 .map(tank -> {
-                    return new TankMove(tank.getId(), tank.getDir(), true);
+                    return checkField(tank, findBlocks(mapState,tank.getPosition()),findEnemyTanks(mapState,tank.getPosition()),findShells(mapState,tank.getPosition()),mapState);
                 }).collect(Collectors.toList());
     }
 
@@ -53,7 +53,7 @@ public class TankPlayer implements Algorithm {
         flag = true;
     }
 
-    private TankMove checkField(Tank currentTank, ArrayList<Position> blockList, ArrayList<Tank> tanks, ArrayList<Shell> shells, MapState mapState) {
+    private TankMove checkField(Tank currentTank, List<Position> blockList, List<Tank> tanks, List<Shell> shells, MapState mapState) {
         Position currPosition = currentTank.getPosition();
         Position nextPosition = getNextPost(currentTank);
         HashSet<Shell> blockedShells = new HashSet<>();
