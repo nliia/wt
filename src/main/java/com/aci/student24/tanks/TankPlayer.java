@@ -52,6 +52,7 @@ public class TankPlayer implements Algorithm {
     }
 
     private TankMove checkField(Tank currentTank, List<Position> blockList, List<Tank> tanks, List<Shell> shells, MapState mapState) {
+        currentTank.setDir(getNextDir(currentTank));
         Position nextPosition = getNextPost(currentTank);
         if (nextPosition.getX() >= mapState.getSize().getHeight() || nextPosition.getX() < 1 || nextPosition.getY() >= mapState.getSize().getHeight() || nextPosition.getY() < 1) {
             shootMove(tanks, currentTank, blockList, mapState);
@@ -72,8 +73,22 @@ public class TankPlayer implements Algorithm {
                 }
             }
         }
+        HashSet<Tank> blockedTanks = new HashSet<>();
+        for(Tank tank:tanks){
+            if (tank.getPosition().getX() == nextPosition.getX()) {
+                for (Position position : blockList) {
+                    if (position.getX() == nextPosition.getX() && Math.abs(tank.getPosition().getY() - nextPosition.getY()) > Math.abs(tank.getPosition().getY() - position.getPosition().getY())) {
+                        blockedTanks.add(tank);
+                    }
+                    if (position.getY() == nextPosition.getY() && Math.abs(tank.getPosition().getX() - nextPosition.getX()) > Math.abs(tank.getPosition().getX() - position.getPosition().getX())) {
+                        blockedTanks.add(tank);
+                    }
+                }
+            }
+        }
+        tanks.removeAll(blockedTanks);
         shells.removeAll(blockedShells);
-        if (shells.isEmpty()) {
+        if (shells.isEmpty()&&tanks.isEmpty()) {
             Position obj = getPosition(nextPosition, mapState);
             if (obj instanceof Brick || (obj instanceof Tank && ((Tank) obj).getTeamId() != teamId) || (obj instanceof Base && obj.equals(enemyBase))) {
                 return new TankMove(currentTank.getId(), currentTank.getDir(), true);
